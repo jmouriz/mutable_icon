@@ -1,6 +1,6 @@
 /// Author: Juan Manuel Mouriz
 /// website: tecnologica.com.ar
-/// Version: 1.1.0
+/// Version: 1.1.1
 /// Null-Safety: checked!
 /// Prefer Const: checked!
 
