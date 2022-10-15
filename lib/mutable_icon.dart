@@ -1,17 +1,74 @@
-library mutable_icon;
+/// Author: Juan Manuel Mouriz
+/// website: tecnologica.com.ar
+/// Version: 1.1.0
+/// Null-Safety: checked!
+/// Prefer Const: checked!
 
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/material.dart';
+
+/// Indicates whether to init from the start or from the end.
+enum InitFrom {
+  /// Init from start to end
+  start,
+  /// Init from end to start
+  end
+}
+
+/// Class [MutableIcon]:
+/// 
+/// [startIcon]: The IconData that will be visible before animation starts.
+/// 
+/// [endIcon]: The IconData that will be visible after animation ends.
+///
+/// [controller]: MutableIcon controller.
+/// 
+/// [startIconColor]: The color to be used for the [startIcon].
+/// 
+/// [endIconColor]: The color to be used for the [endIcon].
+/// 
+/// [duration]: The duration for which the animation runs.
+/// 
+/// [size]: The size of the icon that are to be shown.
+/// 
+/// [clockwise]: If the animation runs in the clockwise or anticlockwise
+/// direction.
+/// 
+/// [initFrom] Used to set initial state. Indicates whether to init from the
+/// start or from the end. Default is [initFrom.start].
 class MutableIcon extends StatefulWidget {
+  /// Creates a [MutableIcon] widget.
+  /// 
+  /// [startIcon]: The IconData that will be visible before animation starts.
+  /// 
+  /// [endIcon]: The IconData that will be visible after animation ends.
+  /// 
+  /// [controller]: MutableIcon controller.
+  /// 
+  /// [startIconColor]: The color to be used for the [startIcon].
+  /// 
+  /// [endIconColor]: The color to be used for the [endIcon].
+  /// 
+  /// [duration]: The duration for which the animation runs.
+  /// 
+  /// [size]: The size of the icon that are to be shown.
+  /// 
+  /// [clockwise]: If the animation runs in the clockwise or anticlockwise
+  /// direction.
+  /// 
+  /// [initFrom]: Used to set initial state. Indicates whether to init from the
+  /// start or from the end. Default is [initFrom.start].
   const MutableIcon({
-    /// The IconData that will be visible before animation Starts
+    Key? key,
+    
+    /// The IconData that will be visible before animation starts
     required this.startIcon,
 
     /// The IconData that will be visible after animation ends
     required this.endIcon,
 
-    /// AnimateIcons controller
+    /// MutableIcon controller
     required this.controller,
 
     /// The color to be used for the [startIcon]
@@ -21,21 +78,26 @@ class MutableIcon extends StatefulWidget {
     this.endIconColor,
 
     /// The duration for which the animation runs
-    this.duration,
+    this.duration = const Duration(milliseconds: 300),
 
-    /// The size of the icon that are to be shown.
-    this.size,
+    /// The size of the icon that are to be shown
+    this.size = 24.0,
 
     /// If the animation runs in the clockwise or anticlockwise direction
-    this.clockwise,
-  });
+    this.clockwise = false,
+
+    /// Used to set initial state. Indicates whether to init from the start
+    /// or from the end. Default is [initFrom.start]
+    this.initFrom = InitFrom.start,
+  }) : super(key: key);
 
   final IconData startIcon, endIcon;
   final MutableIconController controller;
   final Color? startIconColor, endIconColor;
-  final Duration? duration;
-  final double? size;
-  final bool? clockwise;
+  final Duration duration;
+  final double size;
+  final bool clockwise;
+  final InitFrom initFrom;
 
   @override
   _MutableIconState createState() => _MutableIconState();
@@ -48,7 +110,8 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: widget.duration ?? const Duration(seconds: 1),
+      duration: widget.duration,
+      value: widget.initFrom == InitFrom.start ? 0.0 : 1.0,
       lowerBound: 0.0,
       upperBound: 1.0,
     );
@@ -90,21 +153,23 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    double x = _controller.value;
-    double y = 1.0 - _controller.value;
-    double angleX = math.pi / 180 * (180 * x);
-    double angleY = math.pi / 180 * (180 * y);
+    double start = _controller.value;
+    double end = 1.0 - _controller.value;
+    double startOpacity = start;
+    double endOpacity = end;
+    double startAngle = math.pi / 180 * (180 * startOpacity);
+    double endAngle = math.pi / 180 * (180 * endOpacity);
 
     Widget first() {
       final icon = Icon(
         widget.startIcon,
-        size: widget.size ?? 24.0,
+        size: widget.size,
         color: widget.startIconColor ?? Theme.of(context).primaryColor,
       );
       return Transform.rotate(
-        angle: widget.clockwise ?? false ? angleX : -angleX,
+        angle: widget.clockwise ? startAngle : -startAngle,
         child: Opacity(
-          opacity: y,
+          opacity: endOpacity,
           child: icon,
         )
       );
@@ -113,13 +178,13 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
     Widget second() {
       final icon = Icon(
         widget.endIcon,
-        size: widget.size ?? 24.0,
+        size: widget.size,
         color: widget.endIconColor ?? Theme.of(context).primaryColor,
       );
       return Transform.rotate(
-        angle: widget.clockwise ?? false ? -angleY : angleY,
+        angle: widget.clockwise ? -endAngle : endAngle,
         child: Opacity(
-          opacity: x,
+          opacity: startOpacity,
           child: icon
         ),
       );
@@ -128,14 +193,15 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
     return Stack(
       alignment: Alignment.center,
       children: [
-        x == 1 && y == 0 ? second() : first(),
-        x == 0 && y == 1 ? first() : second(),
+        start == 1 && end == 0 ? second() : first(),
+        start == 0 && end == 1 ? first() : second(),
       ],
     );
   }
 }
 
 class MutableIconController {
-  late bool Function() animateToStart, animateToEnd;
+  late bool Function() animateToStart = () => false;
+  late bool Function() animateToEnd = () => false;
   late bool Function() isStart, isEnd;
 }

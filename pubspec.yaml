@@ -1,7 +1,8 @@
 name: mutable_icon
 description: Animate any two icons
 homepage: https://github.com/jmouriz/mutable_icon
-version: 1.0.1
+version: 1.1.0
+repository: https://github.com/jmouriz/mutable_icon
 
 environment:
   sdk: '>=2.18.2 <3.0.0'
