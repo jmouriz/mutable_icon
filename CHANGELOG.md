@@ -12,3 +12,8 @@
 * Add example
 * Improve API doc
 * Update README
+
+## 1.1.1
+
+* Fix format issue.
+* Longest package description.

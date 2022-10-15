@@ -12,56 +12,57 @@ import 'package:flutter/material.dart';
 enum InitFrom {
   /// Init from start to end
   start,
+
   /// Init from end to start
   end
 }
 
 /// Class [MutableIcon]:
-/// 
+///
 /// [startIcon]: The IconData that will be visible before animation starts.
-/// 
+///
 /// [endIcon]: The IconData that will be visible after animation ends.
 ///
 /// [controller]: MutableIcon controller.
-/// 
+///
 /// [startIconColor]: The color to be used for the [startIcon].
-/// 
+///
 /// [endIconColor]: The color to be used for the [endIcon].
-/// 
+///
 /// [duration]: The duration for which the animation runs.
-/// 
+///
 /// [size]: The size of the icon that are to be shown.
-/// 
+///
 /// [clockwise]: If the animation runs in the clockwise or anticlockwise
 /// direction.
-/// 
+///
 /// [initFrom] Used to set initial state. Indicates whether to init from the
 /// start or from the end. Default is [initFrom.start].
 class MutableIcon extends StatefulWidget {
   /// Creates a [MutableIcon] widget.
-  /// 
+  ///
   /// [startIcon]: The IconData that will be visible before animation starts.
-  /// 
+  ///
   /// [endIcon]: The IconData that will be visible after animation ends.
-  /// 
+  ///
   /// [controller]: MutableIcon controller.
-  /// 
+  ///
   /// [startIconColor]: The color to be used for the [startIcon].
-  /// 
+  ///
   /// [endIconColor]: The color to be used for the [endIcon].
-  /// 
+  ///
   /// [duration]: The duration for which the animation runs.
-  /// 
+  ///
   /// [size]: The size of the icon that are to be shown.
-  /// 
+  ///
   /// [clockwise]: If the animation runs in the clockwise or anticlockwise
   /// direction.
-  /// 
+  ///
   /// [initFrom]: Used to set initial state. Indicates whether to init from the
   /// start or from the end. Default is [initFrom.start].
   const MutableIcon({
     Key? key,
-    
+
     /// The IconData that will be visible before animation starts
     required this.startIcon,
 
@@ -103,7 +104,8 @@ class MutableIcon extends StatefulWidget {
   _MutableIconState createState() => _MutableIconState();
 }
 
-class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStateMixin {
+class _MutableIconState extends State<MutableIcon>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -167,12 +169,11 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
         color: widget.startIconColor ?? Theme.of(context).primaryColor,
       );
       return Transform.rotate(
-        angle: widget.clockwise ? startAngle : -startAngle,
-        child: Opacity(
-          opacity: endOpacity,
-          child: icon,
-        )
-      );
+          angle: widget.clockwise ? startAngle : -startAngle,
+          child: Opacity(
+            opacity: endOpacity,
+            child: icon,
+          ));
     }
 
     Widget second() {
@@ -183,10 +184,7 @@ class _MutableIconState extends State<MutableIcon> with SingleTickerProviderStat
       );
       return Transform.rotate(
         angle: widget.clockwise ? -endAngle : endAngle,
-        child: Opacity(
-          opacity: startOpacity,
-          child: icon
-        ),
+        child: Opacity(opacity: startOpacity, child: icon),
       );
     }
 
